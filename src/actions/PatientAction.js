@@ -1,4 +1,4 @@
-import api from "./examination_api";
+import api from "./patient_api";
 
 
 
@@ -11,7 +11,7 @@ export const ACTION_TYPES = {
 
 export const fetchAll = () => {
     return dispatch => {
-        api.examination().fetchAll()
+        api.patient().fetchAll()
         .then(
             response => {
                 console.log(response)
@@ -26,7 +26,7 @@ export const fetchAll = () => {
 }
 
 export const create = (data, onSuccess) => dispatch => {
-    api.examination().create(data)
+    api.patient().create(data)
         .then(res => {
             dispatch({
                 type: ACTION_TYPES.CREATE,
@@ -39,7 +39,7 @@ export const create = (data, onSuccess) => dispatch => {
 
 
 export const update = (id, data, onSuccess) => dispatch => {
-    api.examination().update(id, data)
+    api.patient().update(id, data)
         .then(res => {
             dispatch({
                 type: ACTION_TYPES.DELETE,
@@ -51,7 +51,7 @@ export const update = (id, data, onSuccess) => dispatch => {
 }
 
 export const delete_exam = (id, onSuccess) => dispatch => {
-    api.examination().delete(id)
+    api.patient().delete(id)
         .then(res => {
             dispatch({
                 type: ACTION_TYPES.DELETE,
