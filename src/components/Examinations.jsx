@@ -10,11 +10,6 @@ import  ExaminationForm  from "./ExaminationForm";
 
 
 
-const StyledPaper = styled(Paper)(() => ({
-
-    margin: 16, // 16px because 1 is 8 px
-    padding: 16, // 16px because 1 is 8 px
-}));
 
 const StyledTableHead = styled(TableHead)(() => ({
     '& .MuiTableCell-head' : {
@@ -32,7 +27,6 @@ const Examinations = ({classes, ...props}) => {
     }, []) // alternative for componentDidMount
     return ( 
 
-        <StyledPaper elevation={3}>
             <Grid container>
                 <Grid item xs={6}>
                     <ExaminationForm/>
@@ -42,6 +36,7 @@ const Examinations = ({classes, ...props}) => {
                         <Table>
                             <StyledTableHead>
                                 <TableRow>
+                                    <TableCell> Patient Id</TableCell>
                                     <TableCell> Createnin </TableCell>
                                     <TableCell> Glucose </TableCell>
                                     <TableCell> Glucosed hymoglobin  </TableCell>
@@ -55,6 +50,7 @@ const Examinations = ({classes, ...props}) => {
                                     props.examinationsList.map((record, index) => {
                                         return (
                                         <TableRow key = {index} hover>
+                                            <TableCell> {record.patient_id} </TableCell>
                                             <TableCell> {record.createnin} </TableCell>
                                             <TableCell> {record.glucose} </TableCell>
                                             <TableCell> {record.glucosed_hymoglobin}  </TableCell>
@@ -70,7 +66,6 @@ const Examinations = ({classes, ...props}) => {
                     </TableContainer>
                 </Grid>
         </Grid> 
-        </StyledPaper>
 
     );
 }

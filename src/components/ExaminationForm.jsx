@@ -75,6 +75,7 @@ const ExaminationForm = (props) => {
             <Grid container>
                 <Grid item xs={6}>
                    {examination_markers.map((obj, idx) => {
+                        if (idx <= (examination_markers.length - 1)/2){
                         return <StyledTextField
                             name={examination_markers_names[idx]}
                             variant="outlined" 
@@ -86,6 +87,24 @@ const ExaminationForm = (props) => {
                             padding="16px" 
                         />
                         }
+                    }
+                    )} 
+                </Grid>
+                <Grid item xs={6}>
+                   {examination_markers.map((obj, idx) => {
+                        if (idx > (examination_markers.length - 1 )/2){
+                        return <StyledTextField
+                            name={examination_markers_names[idx]}
+                            variant="outlined" 
+                            label={obj}
+                            value={values[examination_markers_names[idx]]}
+                            onChange={handleInputChange}
+                            {...(errors[examination_markers_names[idx]] && {error:true, helperText:errors[examination_markers_names[idx]]})}
+                            margin="16px"
+                            padding="16px" 
+                        />
+                        }
+                    }
                     )} 
                 </Grid>
                 <Grid item xs={6}>
