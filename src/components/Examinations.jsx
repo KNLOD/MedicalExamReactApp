@@ -1,87 +1,100 @@
-import  React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import * as actions from "../actions/ExaminationAction";
-import {Grid, Paper, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, styled} from "@mui/material";
-import { withStyles } from '@mui/styles';
-import { spacing } from '@mui/system';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../actions/ExaminationAction';
+import * as patient_actions from '../actions/PatientAction';
+import { Grid, List, ListItem, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import ExaminationForm from './ExaminationForm';
+import ExaminationDialog from './ExaminationDialog';
 
-import  ExaminationForm  from "./ExaminationForm";
+const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList, patientsList }) => {
+  const [searchDate, setSearchDate] = useState('');
+  const [searchPatient, setSearchPatient] = useState('');
+  const [selectedExamination, setSelectedExamination] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
+  useEffect(() => {
+    fetchAllExaminations();
+  }, []);
 
+  useEffect(() => {
+    // Fetch patient information for each examination
+    examinationsList.forEach((examination) => {
+      console.log("fetching patient with id: ", examination.patient_id)
+      fetchPatientById(examination.patient_id);
+    });
+  }, [examinationsList]);
 
+  const handleItemClick = (examination) => {
+    setSelectedExamination(examination);
+    setOpenDialog(true);
+  };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
-const StyledTableHead = styled(TableHead)(() => ({
-    '& .MuiTableCell-head' : {
-        fontSize: "1.25rem"
-    }
-}));
+  const filterExaminations = (examinations) => {
+    return examinations.filter((examination) => {
+      // Filter by date
+      const examinationDate = new Date(examination.date).toLocaleDateString();
+      if (searchDate && examinationDate !== searchDate) {
+        return false;
+      }
+      // Filter by patient
+      if (searchPatient && examination.patient_name.toLowerCase().indexOf(searchPatient.toLowerCase()) === -1) {
+        return false;
+      }
+      return true;
+    });
+  };
 
+  const filteredExaminations = filterExaminations(examinationsList);
 
+  return (
+    <div>
+      <Grid container spacing={2} alignItems="center">
+        {/* Search fields */}
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Search by Date (MM/DD/YYYY)"
+            variant="outlined"
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Search by Patient Name"
+            variant="outlined"
+            value={searchPatient}
+            onChange={(e) => setSearchPatient(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+      {/* List of examination items */}
+      <List>
+        {filteredExaminations.map((examination, index) => (
+          <ListItem key={index} button onClick={() => handleItemClick(examination)}>
+            <ListItemText primary={examination.date} secondary={`Patient: ${examination.patient_name}`} />
+          </ListItem>
+        ))}
+      </List>
+      {/* Dialog for detailed examination information */}
+      <ExaminationDialog open={openDialog} onClose={handleCloseDialog} selectedExamination={selectedExamination} />
+    </div>
+  );
+};
 
-const Examinations = ({classes, ...props}) => {
+const mapStateToProps = state => ({
+  examinationsList: state.examination.list,
+  patientsList: state.patient.list
+});
 
-    useEffect(() => {
-        props.fetchAllExaminations();
+const mapDispatchToProps = {
+  fetchAllExaminations: actions.fetchAll,
+  fetchPatientById: patient_actions.fetchById
+};
 
-    }, []) // alternative for componentDidMount
-    return ( 
-
-            <Grid container>
-                <Grid item xs={6}>
-                    <ExaminationForm/>
-                </Grid>
-                <Grid item xs={6}>
-                    <TableContainer>
-                        <Table>
-                            <StyledTableHead>
-                                <TableRow>
-                                    <TableCell> Patient Id</TableCell>
-                                    <TableCell> Createnin </TableCell>
-                                    <TableCell> Glucose </TableCell>
-                                    <TableCell> Glucosed hymoglobin  </TableCell>
-                                    <TableCell> Homocystein  </TableCell>
-                                    <TableCell> C Reactive Protein  </TableCell>
-                                    <TableCell> Cholesterol  </TableCell>
-                                </TableRow>
-                            </StyledTableHead>
-                            <TableBody>
-                                {
-                                    props.examinationsList.map((record, index) => {
-                                        return (
-                                        <TableRow key = {index} hover>
-                                            <TableCell> {record.patient_id} </TableCell>
-                                            <TableCell> {record.createnin} </TableCell>
-                                            <TableCell> {record.glucose} </TableCell>
-                                            <TableCell> {record.glucosed_hymoglobin}  </TableCell>
-                                            <TableCell> {record.homocystein}  </TableCell>
-                                            <TableCell> {record.c_reactive_protein}  </TableCell>
-                                            <TableCell> {record.cholesterol}  </TableCell>
-                                        </TableRow>)
-                                    })
-                                }
-
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-        </Grid> 
-
-    );
-}
-
-const mapStateToProps = state => {
-    return {
-        examinationsList: state.examination.list
-    }
-}
-
-const mapActionToProps = {
-    fetchAllExaminations: actions.fetchAll
-}
-
-
-
-export default connect(mapStateToProps, mapActionToProps)(Examinations);
- 
-//export default Examinations;
+export default connect(mapStateToProps, mapDispatchToProps)(Examinations);

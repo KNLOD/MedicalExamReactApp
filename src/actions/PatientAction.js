@@ -7,11 +7,28 @@ export const ACTION_TYPES = {
     UPDATE:'UPDATE',
     DELETE:'DELETE',
     FETCH_ALL:'FETCH_ALL',
+    FETCH_BY_ID: "FETCH_BY_ID",
 }
 
 export const fetchAll = () => {
     return dispatch => {
         api.patient().fetchAll()
+        .then(
+            response => {
+                console.log(response)
+                dispatch({
+                    type:ACTION_TYPES.FETCH_ALL,
+                    payload: response.data
+                })
+            }
+        ).catch(err => console.log(err))
+        //..
+    }
+}
+
+export const fetchById = (id) => {
+    return dispatch => {
+        api.patient().fetchById(id)
         .then(
             response => {
                 console.log(response)
