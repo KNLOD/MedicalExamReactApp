@@ -8,6 +8,8 @@ const examination_markers = ["createnin", "glucose", "glucosed hymoglobin", "hom
 const examination_markers_names = ["createnin", "glucose", "glucosed_hymoglobin", "homocystein", "c_reactive_protein", "cholesterol"];
 
 const initialFieldValues = {
+    patient_id: -1,
+    patient: null,
     createnin : '',
     glucose : '',
     glucosed_hymoglobin : '',
@@ -64,7 +66,8 @@ const ExaminationForm = (props) => {
         e.preventDefault();
         if(validate()){
             window.alert("validation succeeded")
-            props.createExamination(values, () => {window.alert("validation succeeded")})
+            console.log("patient id: ", props.patient_id)
+            props.createExamination({...values, patient_id: props.patient_id}, () => {window.alert("validation succeeded")})
         }
         console.log(values)
         console.log(errors)

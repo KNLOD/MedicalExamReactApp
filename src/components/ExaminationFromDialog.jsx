@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import ExaminationForm from './ExaminationForm';
 
-const ExaminationFormDialog = ({ open, onClose }) => {
+const ExaminationFormDialog = ({ open, onClose, patient_id }) => {
   const handleClose = () => {
     onClose();
   };
@@ -20,7 +20,7 @@ const ExaminationFormDialog = ({ open, onClose }) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Add Examination</DialogTitle>
       <DialogContent>
-        <ExaminationForm onSubmit={handleAddExamination} onCancel={handleClose} />
+        <ExaminationForm onSubmit={handleAddExamination} onCancel={handleClose} patient_id={patient_id}/>
       </DialogContent>
     </Dialog>
   );

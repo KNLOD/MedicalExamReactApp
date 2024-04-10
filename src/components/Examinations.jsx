@@ -11,6 +11,7 @@ const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList
   const [searchPatient, setSearchPatient] = useState('');
   const [selectedExamination, setSelectedExamination] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [examinations, setExaminations] = useState([]);
 
   useEffect(() => {
     fetchAllExaminations();
@@ -18,11 +19,33 @@ const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList
 
   useEffect(() => {
     // Fetch patient information for each examination
-    examinationsList.forEach((examination) => {
-      console.log("fetching patient with id: ", examination.patient_id)
-      fetchPatientById(examination.patient_id);
-    });
+      examinationsList.forEach((examination) => {
+        console.log(examination)
+        console.log("fetching patient with id: ", examination.patient_id)
+        fetchPatientById(examination.patient_id);
+      })
   }, [examinationsList]);
+
+  useEffect(() => {
+  // Associate fetched patient with each examination
+    console.log("patientList changed", patientsList)
+    const updatedExaminations = examinationsList.map((examination) => {
+      return {
+        ...examination,
+        patient: patientsList.find((patient) => {
+          console.log("ids: ", patient.id, examination.patient_id)
+          return patient.id === examination.patient_id
+        })
+      };
+    });
+    console.log("Updated Examinations", updatedExaminations)
+    setExaminations(updatedExaminations)
+
+  // Now updatedExaminations contains examinations with associated patient information
+}, [patientsList]);
+
+
+
 
   const handleItemClick = (examination) => {
     setSelectedExamination(examination);
@@ -41,14 +64,21 @@ const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList
         return false;
       }
       // Filter by patient
-      if (searchPatient && examination.patient_name.toLowerCase().indexOf(searchPatient.toLowerCase()) === -1) {
+      let patient_data = ""
+      if (examination.patient){
+
+        patient_data = examination.patient.lastName + " " + examination.patient.name + " " +examination.patient.patronym
+
+      }
+
+      if (searchPatient && patient_data.toLowerCase().indexOf(searchPatient.toLowerCase()) === -1) {
         return false;
       }
       return true;
     });
   };
 
-  const filteredExaminations = filterExaminations(examinationsList);
+  const filteredExaminations = filterExaminations(examinations);
 
   return (
     <div>
@@ -77,7 +107,7 @@ const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList
       <List>
         {filteredExaminations.map((examination, index) => (
           <ListItem key={index} button onClick={() => handleItemClick(examination)}>
-            <ListItemText primary={examination.date} secondary={`Patient: ${examination.patient_name}`} />
+            <ListItemText primary={examination.date} secondary={`${examination.patient ? examination.patient.lastName + " " + examination.patient.name + " " + examination.patient.patronym: " "}`} />
           </ListItem>
         ))}
       </List>
@@ -87,14 +117,14 @@ const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   examinationsList: state.examination.list,
   patientsList: state.patient.list
 });
 
 const mapDispatchToProps = {
   fetchAllExaminations: actions.fetchAll,
-  fetchPatientById: patient_actions.fetchById
+  fetchPatientById: patient_actions.fetchById,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Examinations);

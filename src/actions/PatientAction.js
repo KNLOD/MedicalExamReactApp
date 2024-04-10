@@ -31,9 +31,9 @@ export const fetchById = (id) => {
         api.patient().fetchById(id)
         .then(
             response => {
-                console.log(response)
+                console.log("PatientAction fetchbyid:", response.data)
                 dispatch({
-                    type:ACTION_TYPES.FETCH_ALL,
+                    type:ACTION_TYPES.FETCH_BY_ID,
                     payload: response.data
                 })
             }

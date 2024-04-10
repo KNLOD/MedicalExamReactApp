@@ -56,7 +56,7 @@ const PatientCard = (record) => {
             <AddCircleIcon /> Add Examination
           </Button>
 
-          <ExaminationFormDialog open={openAddExaminationDialog} onClose={handleCloseAddExaminationDialog} />
+          <ExaminationFormDialog open={openAddExaminationDialog} onClose={handleCloseAddExaminationDialog} patient_id={id}/>
 
       </CardContent>
     </Card>
