@@ -67,7 +67,8 @@ const ExaminationForm = (props) => {
         if(validate()){
             window.alert("validation succeeded")
             console.log("patient id: ", props.patient_id)
-            props.createExamination({...values, patient_id: props.patient_id}, () => {window.alert("validation succeeded")})
+            let date = new Date().toLocaleDateString();
+            props.createExamination({...values, date: date, patient_id: props.patient_id}, () => {window.alert("validation succeeded")})
         }
         console.log(values)
         console.log(errors)

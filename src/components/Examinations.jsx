@@ -59,7 +59,7 @@ const Examinations = ({ fetchAllExaminations, fetchPatientById, examinationsList
   const filterExaminations = (examinations) => {
     return examinations.filter((examination) => {
       // Filter by date
-      const examinationDate = new Date(examination.date).toLocaleDateString();
+      const examinationDate = examination.date;
       if (searchDate && examinationDate !== searchDate) {
         return false;
       }
